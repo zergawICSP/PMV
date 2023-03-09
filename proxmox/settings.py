@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_c)nbf9$v3a8^s#k8bv8r#31f#&qx!fj#r$+4s(03*+-7jq7(z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -99,7 +99,18 @@ DATABASES = {
         'PORT': '5433',
     }
 }
-
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'csmgt',
+        'USER': 'admin',
+        'PASSWORD': 'adminpass',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+"""
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 
