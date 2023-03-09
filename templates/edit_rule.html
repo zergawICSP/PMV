@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ZCloud</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="ZCloud" />
+    <meta name="keywords" content="ZCloud"/>
+    <meta name="author" content="CodedThemes"/>
+
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'login/images/logo-128.png' %}" type="image/x-icon">
+    <!-- fontawesome icon -->
+    <link rel="stylesheet" href="{% static 'dashboard/fonts/fontawesome/css/fontawesome-all.min.css' %}">
+    <!-- animation css -->
+    <link rel="stylesheet" href="{% static 'dashboard/plugins/animation/css/animate.min.css' %}">
+    <!-- vendor css -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+
+</head>
+
+<body>
+    <!-- [ Pre-loader ] start -->
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+    </div>
+    <!-- [ Pre-loader ] End -->
+    <!-- [ navigation menu ] start -->
+    <nav class="pcoded-navbar">
+        <div class="navbar-wrapper">
+            <div class="navbar-brand header-logo">
+                <a href="/" class="b-brand">
+                        <img src="{% static 'login/images/logo-128.png' %}" alt="Avatar">
+                    <span class="b-title">ZCloud</span>
+                </a>
+                <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+            </div>
+            <div class="navbar-content scroll-div">
+                <ul class="nav pcoded-inner-navbar">
+                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item active">
+                        <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                    </li>
+                    
+                    <li class="nav-item pcoded-menu-caption">
+                        <label><h5 style="color: yellow;">Cloud Servers</h5></label>
+                    </li>
+                    {% for vm in request.session.vms %}
+                    <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">{{vm.name}}</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="{% url 'summary' vm.name %}" class="">Summary</a></li>
+                            <li class=""><a href="{% url 'console' vm.name %}" class="">Console</a></li>
+                            <li class=""><a href="{% url 'backup' vm.name %}" class="">Backup</a></li>
+                            <li class=""><a href="{% url 'snapshots' vm.name %}" class="">Snapshots</a></li>
+                            <li class=""><a href="{% url 'firewall' vm.name %}" class="">Firewall</a></li>
+                        </ul>
+                    </li>
+                    {% endfor %}
+                    
+                    <li data-username="" class="nav-item">
+                        <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-help-circle"></i></span><span class="pcoded-mtext">Helpdesk</span></a>
+                      </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- [ navigation menu ] end -->
+
+    <!-- [ Header ] start -->
+    <header class="navbar pcoded-header navbar-expand-lg navbar-light">
+        <div class="m-header">
+            <a class="mobile-menu" id="mobile-collapse1" href="javascript:"><span></span></a>
+            <a href="index.html" class="b-brand">
+                   <img src="{% static 'login/images/logo-128.png' %}" alt="Avatar">
+                   <span class="b-title">ZCloud</span>
+               </a>
+        </div>
+        <a class="mobile-menu" id="mobile-header" href="javascript:">
+            <i class="feather icon-more-horizontal"></i>
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i class="feather icon-maximize"></i></a></li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right notification">
+                            <div class="noti-head">
+                                <h6 class="d-inline-block m-b-0">Notifications</h6>
+                                <div class="float-right">
+                                </div>
+                            </div>
+                            <ul class="noti-body">
+                              {% for notification in notifications|slice:"0:4"  %}
+                                <li class="notification">
+                                    <div class="media">
+                                        <img class="img-radius" src="{% static 'login/images/zcloudc.png' %}" alt="Generic placeholder image">
+                                        <div class="media-body">
+                                            <p class="ml-3"><strong><a href="{% url 'notifications' notification.id %}">{{notification.heading1}}</a> </strong></p>
+                                            <p>{{notification.heading2}}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="noti-footer">
+                                <a href="javascript:"></a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="dropdown drp-user">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon feather icon-settings"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-notification">
+                            <div class="pro-head">
+                                <img src="{% static 'login/images/zcloudc.png' %}" class="img-radius" alt="User-Profile-Image">
+                                <span>{{client.company_name}}</span>
+                                <a href="#" class="dud-logout" title="Logout">
+                                    <i class="feather icon-log-out"></i>
+                                </a>
+                            </div>
+                            <ul class="pro-body">
+                                <li><a href="{% url 'cloudservers' %}" class="dropdown-item"><i class="feather icon-clipboard"></i>Dashboard</a></li>
+                                <li><a href="{% url 'logout' %}" class="dropdown-item"><i class="feather icon-lock"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <!-- [ Header ] end -->
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <section style="background-color: #eee;">
+                                <div class="container py-5">
+                                  <div class="row">
+                                    <div class="col">
+                                      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                                        <ol class="breadcrumb mb-0">
+                                          <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                          <li class="breadcrumb-item"><a href="#">{{ticket.category}}</a></li>
+                                          <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                                        </ol>
+                                      </nav>
+                                    </div>
+                                  </div>
+                              
+                                  <div class="row">
+                                    <div class="col-xl-12 col-md-12 m-b-30">
+                                        <div class="card card-event col-xl-12">
+                                            <div class="card-block">
+                                                <div class="row align-items-center justify-content-center">
+                                                    <div class="col">
+                                                        <h5 class="m-0" id="uptime">Edit Rule</h5><hr>
+                                                        <form action="{% url 'edit_rule' firew.pos %}" method="post">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="name">Interface</label>
+                                                                    <input type="text" name="iface" value="{{firew.iface}}" class="form-control"><br>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <input type="hidden" name="">
+                                                                    <label for="name">Enable</label>
+                                                                    <select name="enable" class="form-control" >
+                                                                        {% if firew.enable == 1%}
+                                                                        <option value="">Current: Yes}</option>
+                                                                        {% else %}
+                                                                        <option value="">Current: No</option>
+                                                                        {% endif %}
+                                                                        <option value="on">Yes</option>
+                                                                        <option value="off">No</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="name">Macro</label>
+                                                                    <select name="macro" class="form-control" id="macro" onchange="showDiv(this)">
+                                                                        <option value="{{firew.macro}}">current : {{firew.macro}}</option>
+                                                                        <option value=""></option>
+                                                                        <option value="daap">DAAP: Digital Audio Access Protocol traffic (iTune...)</option>
+                                                                        <option value="dns">DNS: Domain Name System traffic (udp and tcp)</option>
+                                                                        <option value="ftp">FTP: File Transfer Protocol</option>
+                                                                        <option value="http">HTTP: Hypertext Transfer Protocol(WWW)</option>
+                                                                        <option value="https">HTTPS: Hypertext Transfer Protocol(WWW) over SSL</option>
+                                                                        <option value="imap">IMAP: Internet Message Access Protocol</option>
+                                                                        <option value="imaps">IMAPS: Internet Message Access Protocol over SSL</option>
+                                                                        <option value="ipsec">IPsec: IPsec traffic</option>
+                                                                        <option value="l2tp">L2TP: Layer 2 Tunneling Protocol traffic</option>
+                                                                        <option value="ldap">LDAP: Lightweight Directory Access Protocol traffic</option>
+                                                                        <option value="mssql">MSSQL: Microsoft SQL server</option>
+                                                                        <option value="mail">Mail: Mail traffic (SMTP,SMTPS,Submission)</option>
+                                                                        <option value="mysql">MySQL: MySQL server</option>
+                                                                        <option value="ntp">NTP: Network Time Protocol (ntpd)</option>
+                                                                        <option value="openvpn">OpenVPN: OpenVPN traffic</option>
+                                                                        <option value="pop3">POP3: POP3 traffic</option>
+                                                                        <option value="pop3s">POP3S: Encrypted POP3 traffic</option>
+                                                                        <option value="pptp">PPtP: Point-to-Point Tunneling Protocol</option>
+                                                                        <option value="ping">Ping: ICMP echo request</option>
+                                                                        <option value="postgressql">PostgresSQL: PostgresSQL server</option>
+                                                                        <option value="rdp">RDP: Microsoft Remote Desktop Protocol traffic</option>
+                                                                        <option value="rsync">Rsync: Rsync server</option>
+                                                                        <option value="smb">SMB: Microsoft SMB server</option>
+                                                                        <option value="smbswat">SMBswat: Samba Web Adminstration tool</option>
+                                                                        <option value="smtp">SMTP: Simple Mail Transfer Protocol</option>
+                                                                        <option value="smtps">SMTPS: Encrypted Simple Mail Transfer Protocol</option>
+                                                                        <option value="spamd">SPAMD: Spam Assasin SPAMD traffic</option>
+                                                                        <option value="ssh">SSH: Secure shell traffic</option>
+                                                                        <option value="submission">Submission: Mail message submission traffic</option>
+                                                                        <option value="syslog">Syslog: Syslog Protocol(RFC 5424) traffic</option>
+                                                                        <option value="tftp">TFTP: Trivial File Transfer Protocol traffic</option>
+                                                                        <option value="telnet">Telnet: Telenet traffic</option>
+                                                                        <option value="time">Time: RFC 868 Time Protocol</option>
+                                                                        <option value="trcrt">Trcrt: Traceroute (for up to 30 hops) traffic</option>
+                                                                        <option value="vnc">VNC: VNC traffic for VNC display's 0-99</option>
+                                                                        <option value="vncl">VNCL: VNC traffic for Vncservers to Vncviewers</option>
+                                                                        <option value="whois">Whois: Whois(nicname,RFC 3912) traffic</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div><br>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="name">Source</label><br>
+                                                                    <input type="text" name="source" value="{{firew.source}}" class="form-control"><br>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="name">Destination</label><br>
+                                                                    <input type="text" name="dest" value="{{firew.dest}}" class="form-control"><br>
+                                                                </div>
+                                                            </div>
+                                                            <div id="mdep">
+                                                                <div class="row"> 
+                                                                    <div class="col-md-6" id="ports">
+                                                                        <label for="name">Source Port</label>
+                                                                        <input type="text" name="sport" value="{{firew.sport}}" class="form-control"><br>
+                                                                        <label for="name">Protocol</label>
+                                                                        <select name="proto" class="form-control" >
+                                                                            <option value="{{firew.proto}}">Current: {{firew.proto}}</option>
+                                                                            <option value=""></option>
+                                                                            <option value="tcp">tcp: 6 : Transmission Control Protocol</option>
+                                                                            <option value="udp">udp: 17 : User Datagram Protocol</option>
+                                                                            <option value="icmp">icmp: 1 : Internet Control Message</option>
+                                                                            <option value="igmp">igmp: 2 : Internet group Management</option>
+                                                                            <option value="rdp">rdp: 27 : "reliable datagram" Protocol</option>
+                                                                            <option value="rsvp">rsvp: 46 : Reservation Protocol</option>
+                                                                            <option value="pim">pim: 103 : Protocol Independent Multicast</option>
+                                                                        </select>
+                                                                    </div>  
+                                                                    <div class="col-md-6" id="proto">
+                                                                        <label for="name">Dest. Port</label>
+                                                                        <input type="text" name="dport" value="{{firew.dport}}" class="form-control"><br>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  
+                
+                                </div>
+                              </section><br><br>
+                            <!-- [ Main Content ] end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+    <style>
+        img {
+        border-radius: 25%;
+        width: 45px;
+        height: 45px;
+        }
+    </style>
+    <!-- Required Js -->
+    <script type="text/javascript">
+        var macro = document.getElementById('macro')
+        var maselected = "{{mselected}}"
+        console.log(maselected)
+        if(maselected=="true"){
+            console.log('true?')
+            document.getElementById('mdep').style.display = "none";
+        }
+        else{
+            console.log("false")
+            document.getElementById('mdep').style.display = "block";
+        }
+        function showDiv(select){
+           if(select.value==""){
+            document.getElementById('mdep').style.display = "block";
+            alert(mselected)
+           } else{
+            document.getElementById('mdep').style.display = "none";
+           }
+        } 
+        </script>
+<script src="{% static 'dashboard/js/vendor-all.min.js' %}"></script>
+	<script src="{% static 'dashboard/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/pcoded.min.js' %}"></script>
+
+</body>
+</html>

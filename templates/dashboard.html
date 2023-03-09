@@ -1,0 +1,341 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ZCloud</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="ZCloud" />
+    <meta name="keywords" content="ZCloud"/>
+    <meta name="author" content="CodedThemes"/>
+
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'login/images/logo-128.png' %}" type="image/x-icon">
+    <!-- fontawesome icon -->
+    <link rel="stylesheet" href="{% static 'dashboard/fonts/fontawesome/css/fontawesome-all.min.css' %}">
+    <!-- animation css -->
+    <link rel="stylesheet" href="{% static 'dashboard/plugins/animation/css/animate.min.css' %}">
+    <!-- vendor css -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+
+</head>
+
+<body>
+    <!-- [ Pre-loader ] start -->
+    <div class="loader-bg">
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+    </div>
+    <!-- [ Pre-loader ] End -->
+    <!-- [ navigation menu ] start -->
+    <nav class="pcoded-navbar">
+        <div class="navbar-wrapper">
+            <div class="navbar-brand header-logo">
+                <a href="/" class="b-brand">
+                        <img src="{% static 'login/images/logo-128.png' %}" alt="Avatar">
+                    <span class="b-title">ZCloud</span>
+                </a>
+                <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+            </div>
+            <div class="navbar-content scroll-div">
+                <ul class="nav pcoded-inner-navbar">
+                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item active">
+                        <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                    </li>
+                    <li class="nav-item pcoded-menu-caption">
+                        <label><h5 style="color: yellow;">Cloud Servers</h5></label>
+                    </li>
+                    {% for vm in request.session.vms %}
+                    <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">{{vm.name}}</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="{% url 'summary' vm.name %}" class="">Summary</a></li>
+                            <li class=""><a href="{% url 'console' vm.name %}" class="">Console</a></li>
+                            <li class=""><a href="{% url 'backup' vm.name %}" class="">Backup</a></li>
+                            <li class=""><a href="{% url 'snapshots' vm.name %}" class="">Snapshots</a></li>
+                            <li class=""><a href="{% url 'firewall' vm.name %}" class="">Firewall</a></li>
+                        </ul>
+                    </li>
+                    {% endfor %}
+              
+                    <li data-username="" class="nav-item">
+                      <a href="{% url 'helpdesk' client.id %}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-help-circle"></i></span><span class="pcoded-mtext">Helpdesk</span></a>
+                    </li>
+                    
+                    <li data-username="" class="nav-item">
+                      <a href="{% url 'logs' %}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-list"></i></span><span class="pcoded-mtext">Logs</span></a>
+                  </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- [ navigation menu ] end -->
+
+    <!-- [ Header ] start -->
+    <header class="navbar pcoded-header navbar-expand-lg navbar-light">
+        <div class="m-header">
+            <a class="mobile-menu" id="mobile-collapse1" href="javascript:"><span></span></a>
+            <a href="index.html" class="b-brand">
+                   <img src="{% static 'login/images/logo-128.png' %}" alt="Avatar">
+                   <span class="b-title">ZCloud</span>
+               </a>
+        </div>
+        <a class="mobile-menu" id="mobile-header" href="javascript:">
+            <i class="feather icon-more-horizontal"></i>
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i class="feather icon-maximize"></i></a></li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right notification">
+                            <div class="noti-head">
+                                <h6 class="d-inline-block m-b-0">Notifications</h6>
+                                <div class="float-right">
+                                </div>
+                            </div>
+                            <ul class="noti-body">
+                              {% for notification in notifications|slice:"0:4"  %}
+                                <li class="notification">
+                                    <div class="media">
+                                        <img class="img-radius" src="{% static 'login/images/zcloudc.png' %}" alt="Generic placeholder image">
+                                        <div class="media-body">
+                                            <p class="ml-3"><strong><a href="{% url 'notifications' notification.id %}">{{notification.heading1}}</a> </strong></p>
+                                            <p>{{notification.heading2}}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="noti-footer">
+                                <a href="javascript:"></a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="dropdown drp-user">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon feather icon-settings"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-notification">
+                            <div class="pro-head">
+                                <img src="{% static 'login/images/zcloudc.png' %}" class="img-radius" alt="User-Profile-Image">
+                                <span>{{client.company_name}}</span>
+                                <a href="#" class="dud-logout" title="Logout">
+                                    <i class="feather icon-log-out"></i>
+                                </a>
+                            </div>
+                            <ul class="pro-body">
+                                <li><a href="{% url 'cloudservers' %}" class="dropdown-item"><i class="feather icon-clipboard"></i>Dashboard</a></li>
+                                <li><a href="{% url 'logout' %}" class="dropdown-item"><i class="feather icon-lock"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <!-- [ Header ] end -->
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="row justify-content-center">
+                      <div class="col-md-6 text-center ">
+                          {% for message in messages%}
+                          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                              <strong>{{message}}</strong>
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <a href="{% url 'backup' vm.name %}">
+                                  <small>
+                                      refresh
+                                  </small>
+                              </a>
+                            </div>
+                          {% endfor %}
+                      </div>
+                      <br>
+                  </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <section style="background-color: #eee;">
+                                <div class="container py-5">
+                                  <div class="row">
+                                    <div class="col">
+                                      <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                                        <ol class="breadcrumb mb-0">
+                                          <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                          <li class="breadcrumb-item"><a href="#">{{client.company_name}}</a></li>
+                                          <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                        </ol>
+                                      </nav>
+                                    </div>
+                                  </div>
+                              
+                                  <div class="row">
+                                    <div class="col-lg-4">
+                                      <div class="card mb-4">
+                                        <div class="card-body text-center">
+                                          <img src="{% static 'login/images/zcloudc.png' %}" alt="avatar"
+                                            class="rounded-circle img-fluid" style="width: 150px;">
+                                          <h5 class="my-3">{{client.company_name}}</h5>
+                                          <p class="text-muted mb-1">@{{client.api_name}}</p>
+                                          <p class="text-muted mb-4"></p>
+                                          <div class="d-flex justify-content-center mb-2">
+                                            <a href="{% url 'helpdesk' client.id %}"><button type="button" class="btn btn-outline-primary ms-1">Help Desk</button></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card mb-4 mb-lg-0">
+                                        <div class="card-body p-0">
+                                          <ul class="list-group list-group-flush rounded-3">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                              <i class="fas fa-globe fa-lg text-warning"></i>
+                                              <p class="mb-0"><a href="https://{{client.website}}" target="_blank" rel="noopener noreferrer">{{client.website}}</a> </p>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                      <div class="card mb-4">
+                                        <div class="card-body">
+                                          <div class="row">
+                                            <div class="col-sm-3">
+                                              <p class="mb-0">Company Name</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                              <p class="text-muted mb-0">{{client.company_name}}</p>
+                                            </div>
+                                          </div>
+                                          <hr>
+                                          <div class="row">
+                                            <div class="col-sm-3">
+                                              <p class="mb-0">Email</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                              <p class="text-muted mb-0">{{client.email}}</p>
+                                            </div>
+                                          </div>
+                                          <hr>
+                                          <div class="row">
+                                            <div class="col-sm-3">
+                                              <p class="mb-0">Phone</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                              <p class="text-muted mb-0">{{client.phonenumber}}</p>
+                                            </div>
+                                          </div>
+                                          <hr>
+                                          <div class="row">
+                                            <div class="col-sm-3">
+                                              <p class="mb-0">Phone(optional)</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                              <p class="text-muted mb-0">{{client.phonenumber2}}</p>
+                                            </div>
+                                          </div>
+                                          <hr>
+                                          <div class="row">
+                                            <div class="col-sm-3">
+                                              <p class="mb-0">Address</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                              <p class="text-muted mb-0">{{client.address}}</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="card mb-4 mb-md-0">
+                                            <div class="card-body">
+                                              <p class="mb-4"><span class="text-primary font-italic me-1">Billing </span>Status
+                                              </p>
+                                              <p class="mb-1" style="font-size: .77rem;">Bought at</p>
+                                              <div><p>{{client.buyingdate}}</p></div>
+                                              <div class="progress rounded" style="height: 5px;"><br>
+                                                <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100"
+                                                  aria-valuemin="0" aria-valuemax="100"></div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </section><br><br>
+                            <label><h5 style="color: blue;">Cloud Servers</h5></label>
+                            <div class="row">
+                                {% for vm in request.session.vms %}
+                                <!--[ daily sales section ] start-->
+                                <div class="col-md-6 col-xl-4">
+                                    <div class="card daily-sales">
+                                        <div class="card-block">
+                                            <h5 class="mb-4"><a href="{% url 'summary' vm.name %}">{{vm.name}}</a></h5>
+                                            <div class="row d-flex align-items-center">
+                                                <div class="col-9">
+                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>(uptime:{{ vm.uptime }})</h4>
+                                                </div>
+                                            </div>
+                                            <div class="row d-flex align-items-center">
+                                                <div class="col-12"><br>
+                                                    <p class="m-b-0">{{vm.cpus}} CPU(s)</p>
+                                                    <p class="m-b-0">{% widthratio vm.maxmem 1074000000 1%} GiB Memory Size</p>
+                                                    <p class="m-b-0">{% widthratio vm.maxdisk 1074000000 1%} GiB Bootdisk Size</p>
+                                                </div>
+                                            </div>
+                                            {% if vm.status == 'running' %}
+                                            <div class="progress m-t-30" style="height: 7px;">
+                                                <div class="progress-bar progress-c-theme" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            {% else %}
+                                            <div class="col-8">
+                                                <p class="m-b-0" style="color: red;">server stopped</p>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--[ daily sales section ] end-->
+                                {% endfor %}
+                            </div>
+                            <!-- [ Main Content ] end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+
+    <style>
+	img {
+        border-radius: 25%;
+        width: 45px;
+        height: 45px;
+        }
+    </style>
+
+    <!-- Required Js -->
+<script src="{% static 'dashboard/js/vendor-all.min.js' %}"></script>
+	<script src="{% static 'dashboard/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/pcoded.min.js' %}"></script>
+
+</body>
+</html>
