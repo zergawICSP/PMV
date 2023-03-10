@@ -56,6 +56,9 @@
                         <ul class="pcoded-submenu">
                             <li class=""><a href="{% url 'summary' vm.name %}" class="">Summary</a></li>
                             <li class=""><a href="{% url 'console' vm.name %}" class="">Console</a></li>
+                            <li class=""><a href="{% url 'backup' vm.name %}" class="">Backup</a></li>
+                            <li class=""><a href="{% url 'snapshots' vm.name %}" class="">Snapshots</a></li>
+                            <li class=""><a href="{% url 'firewall' vm.name %}" class="">Firewall</a></li>
                         </ul>
                     </li>
                     {% endfor %}
