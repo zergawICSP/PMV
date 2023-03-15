@@ -31,7 +31,7 @@ def login(request):
 
         if response1.status_code == 200:
             response_json = response1.json()
-            print(response_json)
+            
             username= response_json['data']['username']
             ticket = response_json['data']['ticket']
             csrf = response_json['data']['CSRFPreventionToken']
@@ -137,12 +137,9 @@ def console(request,name):
         for v in vms:
             if v['name'] == name:
                 vm = v
-        print(vm)
         vmid = vm['vmid']
         vmname = vm['name']
         vmnode = vm['node']
-        print('printing vm')
-        print(vmnode)
 
         node = request.session['node']
         url = 'https://server.prom.cd:8006/?console=kvm&novnc=1&vmid=' + str(vmid)+ '&vmname='+ str(name)+'&node='+ node + '&resize=off&cmd='
@@ -208,7 +205,6 @@ def summary(request,name):
         
         try:
             client = Client.objects.get(api_name=api_name)
-            print(client)
             notes = Notes.objects.get(vmid=vmid,note_by=client)
             notes = notes.notes
         except:
@@ -258,19 +254,11 @@ def editnotes(request):
         vmname = request.session['vmname']
         api_name = request.session['username']
         clientn = Client.objects.get(api_name=api_name)
-        print('client')
-        print(clientn)
-        print(type(vmid))
         vmid = str(vmid)
-        print(type(vmid))
-        print(notes)
         vmname = request.session['vmname']
         try:
             findnote = Notes.objects.get(vmid=vmid,note_by=clientn)
-            print('finding notes')
-            print(findnote.notes)
             findnote.notes = notes
-            print(findnote.notes)
             findnote.save()
             return redirect('summary',name=vmname)
         except:
@@ -278,8 +266,6 @@ def editnotes(request):
             customer = Client.objects.get(api_name=api_name)
             Note.note_by.add(customer)
             Note.save()
-            print(Note)
-            print('what are you doing here')
             vmname = request.session['vmname']
             return redirect('summary',name=vmname)
     else:
@@ -306,7 +292,6 @@ def snapshots(request,name):
         try:
             response_json = response.json()
             snapshots = response_json['data']
-            print(snapshots)
         except:
             return redirect('logout')
             
@@ -321,7 +306,7 @@ def snapshots(request,name):
             try:
                 snap['snaptime'] = str(date.fromtimestamp(snap['snaptime']))
             except:
-                print(snap)
+                pass
         request.session['snapshots'] = snapshots
         context={
                 'vm':vm,
@@ -350,9 +335,8 @@ def takesnapshot(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/snapshot"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
         response = requests.post(url,headers=headers,params=params, verify=False)
-        print('response.reason')
-        print(response.reason)
-        print(response.status_code)
+        
+        
         vmname = request.session['vmname']
         messages.warning(request,'This may take few seconds.Your snapshots will be updated upon sucessful snapshots.')
         return redirect('snapshots',name=vmname)
@@ -369,9 +353,8 @@ def removesnap(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/snapshot/{snapname}"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
         response = requests.delete(url,headers=headers, verify=False)
-        print('response.reason')
-        print(response.reason)
-        print(response.status_code)
+        
+        
         vmname = request.session['vmname']
         messages.success(request,'Removing a snapshot.')
         return redirect('snapshots',name=vmname)
@@ -408,7 +391,6 @@ def backup(request,name):
         vmid = vms['vmid']
         vmname = vms['name']
         vm=vms
-        print(vm)
         request.session['node'] = node
         request.session['vmid'] = vmid
         request.session['vmname'] = vmname
@@ -474,7 +456,7 @@ def backupnow(request):
         response = requests.post(url,headers=headers,params=params, verify=False)
         response_json = response.json()
 
-        print(response_json)
+        
         name =  request.session['vmname']
         messages.warning(request,'This may take few seconds.Your backups will be updated upon sucessful backup.')
         response = redirect('backup',name)
@@ -499,9 +481,8 @@ def removebackup(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/storage/{storage}/content/{volid}"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
         response = requests.delete(url,headers=headers,verify=False)
-        print('response')
-        print(response.status_code)
-        print(response.reason)
+        
+        
         name =  request.session['vmname']
         response = redirect('backup',name)
         return response
@@ -520,8 +501,6 @@ def restorebackup(request):
         response = requests.post(urll,headers=headers,verify=False)
         try:
             response_json = response.json()
-            print('#############')
-            print(response_json)
         except:
             return redirect('logout')
         
@@ -529,11 +508,7 @@ def restorebackup(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
         response = requests.post(url,headers=headers,params=params, verify=False)
-        print("#############")
-        print(response.status_code)
-        print(response.content)
-        print(response.reason)
-
+        
         name =  request.session['vmname']
         messages.warning(request,'Restoring the backup...')
         response = redirect('backup',name)
@@ -544,7 +519,6 @@ def restorebackup(request):
 def vmstatus(request):
     if request.method == 'POST':
         command = request.POST['command']
-        print(command)
         node = request.session['node']
         vmid = request.session['vmid']
         csrf = request.session['csrf']
@@ -552,10 +526,6 @@ def vmstatus(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/status/{command}"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
         response = requests.post(url,headers=headers, verify=False)
-        print('response from reboot ###############')
-        print(response.status_code)
-        print(response.reason)
-        print(response.content)
         name =  request.session['vmname']
         response = redirect('cloudservers')
         return response
@@ -640,7 +610,6 @@ def firewall(request,name):
                 vm = v
         vmid = vm['vmid']
         node = vm['node']
-        print(node)
         request.session['vmid'] = vm['vmid']
         request.session['vmname'] = vm['name']
         request.session['node']  = node
@@ -650,7 +619,6 @@ def firewall(request,name):
         try:
             response_json = response.json()
             firewall = response_json['data']
-            print(firewall)
         except:
             return redirect('logout')
             
@@ -687,12 +655,6 @@ def addrule(request):
         dest = request.POST['dest']
         dport = request.POST['dport']
 
-        #proto = str(proto)
-        #sport = str(sport)
-        print('###macroo')
-        print(macro)
-        print(proto)
-
         action = 'ACCEPT'
         type = 'in'
         iface=str(iface)
@@ -711,7 +673,7 @@ def addrule(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/firewall/rules"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.post(url,headers=headers,params=params,verify=False)
-        print(response.status_code)
+        
 
         if response.status_code == 200:
             messages.warning(request,'Successfuly Added')
@@ -740,7 +702,6 @@ def edit_rule(request,id):
 
         action = 'ACCEPT'
         type = 'in'
-        print('iface')
         loglevel='nolog'
 
         pos = int(id)
@@ -753,7 +714,6 @@ def edit_rule(request,id):
         for fire in firewall:
             if fire['pos'] == id:
                 firew=fire
-        print(firew)
         try:
             if firew['macro']:
                 mselected = "true"
@@ -761,18 +721,14 @@ def edit_rule(request,id):
                 mselected = "false"
         except:
             mselected = "false"
-        print('macro')
-        print(macro)
         if macro != '':
             params = {'iface':iface,'proto':'','source':source,'sport':'','dest':dest,'dport':'','action':action,'type':type,'macro':macro,'enable':enable,'log':loglevel}
         else:
              params = {'iface':iface,'proto':proto,'source':source,'sport':sport,'dest':dest,'dport':dport,'action':action,'type':type,'macro':macro,'enable':enable,'log':loglevel}
-        print(params)
+        
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/firewall/rules/{pos}"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.put(url,headers=headers,params=params,verify=False)
-        print('######')
-        print(response.content)
         if response.status_code == 200:
             messages.warning(request,'Successfuly Edited')
         else:
@@ -785,7 +741,6 @@ def edit_rule(request,id):
         csrf = request.session['csrf']
         ticket = request.session['ticket']
         pos = int(id)
-        print(pos)
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/firewall/rules/{pos}"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.get(url,headers=headers,verify=False)
@@ -793,7 +748,6 @@ def edit_rule(request,id):
         for fire in firewall:
             if fire['pos'] == id:
                 firew=fire
-        print(firew)
         try:
             if firew['macro']:
                 mselected = "true"
@@ -816,16 +770,10 @@ def removerule(request):
         vmid= request.session['vmid']
         csrf = request.session['csrf']
         ticket = request.session['ticket']
-        #pos = int(pos)
-        print('remove')
-        print(pos)
         params={'digest':digest}
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/firewall/rules/{pos}"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
         response = requests.delete(url,headers=headers,params=params, verify=False)
-        print('######remove')
-        print(response.content)
-        print(response.reason)
         vmname = request.session['vmname']
         return redirect('firewall',vmname)
     else:
@@ -837,12 +785,10 @@ def logs(request):
         url = f"{BASE_URL}/api2/json/cluster/tasks"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.get(url,headers=headers, verify=False)
-        print(response.reason)
-        print(response.status_code)
+        
         try:
             response_json = response.json()
             logs = response_json['data']
-            print('#######')
             Logs =[]
             for log in logs:
                 if ((log['type'] == 'qmrollback') or (log['type'] == 'qmrestore') or 
@@ -855,10 +801,7 @@ def logs(request):
                          "qmdelsnapshot":"Delete Snapshot"}
                 if log['type'] in dict:
                     log['type'] = dict[log['type']]
-                #log['type'] = log['type'][2:]
-                print(log)
             request.session['logs'] = Logs
-            print(Logs)
         except:
             messages.warning(request,'undergoing tasks, please wait few seconds.')
             name = request.session['vmname']
@@ -903,8 +846,6 @@ def firewall_options(request,name):
                     ipfilter = 1
                 else:
                     ipfilter = 0
-                
-                print(dhcp)
 
                 node = request.session['node']
                 ticket = request.session['ticket']
@@ -922,10 +863,7 @@ def firewall_options(request,name):
                         }
                 except:
                     return redirect('logout')
-                print(response.reason)
-                print(response.content)
-                print(response.status_code)
-                print(context)
+                
                 vmname = request.session['vmname']
                 return redirect('firewall_options',name=vmname)
             else:
@@ -939,7 +877,6 @@ def firewall_options(request,name):
                 response_json = response.json()
                 try:
                     response_json = response.json()
-                    print(response_json['data'])
                     context={
                         'options':response_json['data']
                     }

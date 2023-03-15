@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.contrib.sessions.models import Session
 from .models import Client,Notification,Notes,Ticket
 
+from rest_framework.authtoken.admin import TokenAdmin
+
+TokenAdmin.raw_id_fields = ['user']
+
 class SessionAdmin(admin.ModelAdmin):
     def _session_data(self, obj):
         return obj.get_decoded()
