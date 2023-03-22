@@ -5,6 +5,8 @@ from home.models import Client
 from .serializers import ClientSerializer
 
 class ClientViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, ]
+
     queryset = Client.objects.all().order_by('-id')
     serializer_class = ClientSerializer
     
