@@ -8,7 +8,7 @@ import urllib.parse
 from datetime import date
 from .models import Client,Notification,Notes,Ticket
 
-BASE_URL = 'https://10.123.13.20:8006'
+BASE_URL = 'https://prxlag01node01.telepartnershipsolutions.et:5101'
 
 # Create your views here.
 def home(request):
@@ -134,15 +134,16 @@ def console(request,name):
     if 'username' in request.session:
         ticket = request.session['ticket']
         vms = request.session['vms']
+        csrf = request.session['csrf']
+        ticket = request.session['ticket']
         for v in vms:
             if v['name'] == name:
                 vm = v
         vmid = vm['vmid']
         vmname = vm['name']
-        vmnode = vm['node']
+        node = vm['node']
 
-        node = request.session['node']
-        url = 'https://server.prom.cd:8006/?console=kvm&novnc=1&vmid=' + str(vmid)+ '&vmname='+ str(name)+'&node='+ node + '&resize=off&cmd='
+        url = 'https://prxlag01node01.telepartnershipsolutions.et:5101/?console=kvm&novnc=1&vmid=' + str(vmid)+ '&vmname='+ str(vmname)+'&node='+ node + '&resize=off&cmd='
         ticket = request.session['ticket']
         api_name = request.session['username']
         try:
@@ -157,6 +158,7 @@ def console(request,name):
                 'node':node,
                 'ticket':ticket,
                 'client':client,
+                'url':url,
                 'notifications':notifications,
             }
         response = render(request,'console.html',context)
@@ -289,6 +291,8 @@ def snapshots(request,name):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/snapshot"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.get(url,headers=headers, verify=False)
+        print('response')
+        print(response)
         try:
             response_json = response.json()
             snapshots = response_json['data']
@@ -385,7 +389,7 @@ def backup(request,name):
         for vm in vms:
             if vm['name'] == name:
                 vms = vm
-        storage = 'ISOs'
+        storage = 'EXT_HDD_BACKUP_CLIENT'
         
         node = vms['node']
         vmid = vms['vmid']
@@ -398,8 +402,11 @@ def backup(request,name):
         url = f"{BASE_URL}/api2/json/nodes/{node}/storage/{storage}/content/"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.get(url,headers=headers, params=params,verify=False)
+        
         try:
             response_json = response.json()
+            print('backupss')
+            print(response_json)
         except:
             return redirect('logout')
 
