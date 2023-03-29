@@ -450,7 +450,7 @@ def backupnow(request):
         csrf = request.session['csrf']
         vms = request.session['vms']
         node = request.session['node']
-        storage = 'ISOs'
+        storage = 'EXT_HDD_BACKUP_CLIENT'
 
         notes = request.POST.get('notes')
         if notes== '':
@@ -461,8 +461,9 @@ def backupnow(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/vzdump/"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.post(url,headers=headers,params=params, verify=False)
+        print(response.status_code)
+        print(response.reason)
         response_json = response.json()
-
         
         name =  request.session['vmname']
         messages.warning(request,'This may take few seconds.Your backups will be updated upon sucessful backup.')
