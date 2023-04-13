@@ -185,7 +185,7 @@
                                             <div style="display:flex">
                                                 <!-- BACKUP NOW -->
                                                 <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                                <button type="button" id="backupnow" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">
                                                     Backup Now
                                                 </button>
                                                 
@@ -203,7 +203,7 @@
                                                         <form action="{% url 'backupnow' %}" method="post">
                                                             {% csrf_token %}
                                                             <label for="notes">Notes</label>
-                                                            <input type="text" name="notes" placeholder="{{request.session.vmname}}" class="form-control"><br>
+                                                            <input type="text" name="notes" required placeholder="{{request.session.vmname}}" class="form-control"><br>
                                                             <button type="submit" class="btn btn-primary">Backup</button>
                                                         </form>
                                                         </div>
@@ -311,6 +311,14 @@
     </style>
 
     <!-- Required Js -->
+    <script>
+        backup = document.getElementById('backupnow')
+        var number_ofbks = "{{number_ofbks}}"
+        console.log(number_ofbks)
+        if(number_ofbks >= 1){ 
+            backup.disabled = true
+        }
+    </script>
 <script src="{% static 'dashboard/js/vendor-all.min.js' %}"></script>
 	<script src="{% static 'dashboard/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'dashboard/js/pcoded.min.js' %}"></script>

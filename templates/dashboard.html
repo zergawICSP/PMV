@@ -134,6 +134,7 @@
                             </div>
                             <ul class="pro-body">
                                 <li><a href="{% url 'cloudservers' %}" class="dropdown-item"><i class="feather icon-clipboard"></i>Dashboard</a></li>
+                                <li><a href="{% url 'changepassword' %}" class="dropdown-item"><i class="feather icon-edit"></i>Change Password</a></li>
                                 <li><a href="{% url 'logout' %}" class="dropdown-item"><i class="feather icon-lock"></i> Logout</a></li>
                             </ul>
                         </div>
@@ -193,7 +194,7 @@
                                           <img src="{% static 'login/images/zcloudc.png' %}" alt="avatar"
                                             class="rounded-circle img-fluid" style="width: 150px;">
                                           <h5 class="my-3">{{client.company_name}}</h5>
-                                          <p class="text-muted mb-1">@{{client.api_name}}</p>
+                                          <p class="text-muted mb-1">@{{client.company_name}}</p>
                                           <p class="text-muted mb-4"></p>
                                           <div class="d-flex justify-content-center mb-2">
                                             <a href="{% url 'helpdesk' client.id %}"><button type="button" class="btn btn-outline-primary ms-1">Help Desk</button></a>

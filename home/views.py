@@ -7,6 +7,7 @@ from rest_framework import viewsets
 import urllib.parse
 from datetime import date
 from .models import Client,Notification,Notes,Ticket
+import json
 
 BASE_URL = 'https://prxlag01node01.telepartnershipsolutions.et:5101'
 
@@ -21,17 +22,17 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
         username = username+"@pve"
-        try:
-            url = f"{BASE_URL}/api2/json/access/ticket"
-            headers = {"content-Type": "application/x-www-form-urlencoded"}
-            response1 = requests.post(url, headers=headers, data=f"username={username}&password={password}", verify=False)
-        except:
-            messages.error(request,'Please Contact Adminstrators for help')
-            return redirect('login')
+        
+        url = f"{BASE_URL}/api2/json/access/ticket"
+        headers = {"content-Type": "application/x-www-form-urlencoded"}
+        response1 = requests.post(url, headers=headers, data=f"username={username}&password={password}", verify=False)
 
         if response1.status_code == 200:
-            response_json = response1.json()
-            
+            try:
+                response_json = response1.json()
+            except:
+                return redirect("logout")
+                
             username= response_json['data']['username']
             ticket = response_json['data']['ticket']
             csrf = response_json['data']['CSRFPreventionToken']
@@ -39,7 +40,10 @@ def login(request):
             url2 = f"{BASE_URL}/api2/json/nodes"
             headers2 = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
             response2 = requests.get(url2,headers=headers2,verify=False)
-            response_json = response2.json()
+            try:
+                response_json = response2.json()
+            except:
+                return redirect('logout')
             nodes = response_json['data']
             request.session['username'] = username
             request.session['ticket'] = ticket
@@ -65,12 +69,6 @@ def logout(request):
     response.delete_cookie('PVEAuthCookie')
     return response
 
-def fun(request):
-    ticket = request.session['ticket']
-    context={
-            'ticket':ticket
-        }
-    return render(request,'fun.html',context)
 
 def cloudservers(request):
     if 'username' in request.session:
@@ -83,8 +81,12 @@ def cloudservers(request):
                 node = i['node']
                 url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/"
                 headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
+
                 response = requests.get(url,headers=headers, verify=False)
-                response_json = response.json()
+                try:
+                    response_json = response.json()
+                except:
+                    return redirect('logout')
                 if response_json['data'] != None:
                     try:
                         if response_json['data'][0]:
@@ -291,8 +293,6 @@ def snapshots(request,name):
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/snapshot"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.get(url,headers=headers, verify=False)
-        print('response')
-        print(response)
         try:
             response_json = response.json()
             snapshots = response_json['data']
@@ -405,20 +405,16 @@ def backup(request,name):
         
         try:
             response_json = response.json()
-            print('backupss')
-            print(response_json)
         except:
             return redirect('logout')
 
         bks = response_json['data']
+        number_ofbks = len(bks)
         request.session['backups'] = bks
         backups = request.session['backups']
         bks = []
         try:
             for backup in backups:
-                #bp = str(backup['volid'])
-                #bp= bp[12:]
-                #backup['volid']=bp
                 bksi = (backup['size'])/1000000000
                 backup['ctime'] = str(date.fromtimestamp(backup['ctime']))
                 backup['volid_edited'] = vm['name']+ '-' +str(backup['ctime'])
@@ -437,7 +433,8 @@ def backup(request,name):
                 'ticket':ticket,
                 'vm':vm,
                 'client':client,
-                'notifications':notifications
+                'notifications':notifications,
+                'number_ofbks': number_ofbks
             }
         response = render(request,'backup.html',context)
         return response
@@ -461,8 +458,6 @@ def backupnow(request):
         url = f"{BASE_URL}/api2/json/nodes/{node}/vzdump/"
         headers = {"CSRFPreventionToken": csrf, "Cookie": "PVEAuthCookie="+ticket}
         response = requests.post(url,headers=headers,params=params, verify=False)
-        print(response.status_code)
-        print(response.reason)
         response_json = response.json()
         
         name =  request.session['vmname']
@@ -479,8 +474,7 @@ def removebackup(request):
         csrf = request.session['csrf']
         ticket = request.session['ticket']
         vmid = request.session['vmid']
-        #volid = 'ISOs:backup/'+volid
-        storage = 'ISOs'
+        storage = 'EXT_HDD_BACKUP_CLIENT'
 
         urll = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/status"
         headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
@@ -882,7 +876,6 @@ def firewall_options(request,name):
                 url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/firewall/options"
                 headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
                 response = requests.get(url,headers=headers, verify=False)
-                response_json = response.json()
                 try:
                     response_json = response.json()
                     context={
@@ -893,3 +886,27 @@ def firewall_options(request,name):
                 return render(request,'firewall_options.html',context)
     else:
         return redirect('login')
+
+
+def changepassword(request):
+    if request.method == 'POST':
+        password = request.POST['password']
+        #confirm_password = request.POST['confirm_password']
+        userid = request.session['username']
+        csrf = request.session['csrf']
+        ticket = request.session['ticket']
+        params = {'password':password,"userid":userid}
+        url = f"{BASE_URL}/api2/json/access/password"
+        headers = {"CSRFPreventionToken": csrf,"Cookie": "PVEAuthCookie="+ticket}
+        response = requests.put(url,headers=headers, params=params, verify=False)
+        if response.status_code == 200:
+            messages.warning(request,'Successfuly Changed')
+            return redirect('changepassword')
+        else:
+            messages.warning(request,json.loads(response.content)["errors"])
+            return redirect('changepassword')
+    else:
+        if 'username' in request.session:
+            return render(request,'changepassword.html')
+        else:
+            return redirect('logout')

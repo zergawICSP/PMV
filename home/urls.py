@@ -29,5 +29,5 @@ urlpatterns = [
     path('edit_ticket/<str:id>/',views.edit_ticket,name='edit_ticket'),
     path('remove_ticket',views.remove_ticket,name='remove_ticket'),
     path('logs',views.logs,name='logs'),
-    
+    path('changepassword',views.changepassword,name='changepassword')
 ]
