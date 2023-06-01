@@ -9,7 +9,7 @@ from datetime import date
 from .models import Client,Notification,Notes,Ticket
 import json
 
-BASE_URL = 'https://prxlag01node01.telepartnershipsolutions.et:5101'
+BASE_URL = 'https://prxlag01node01.zergaw.com:5101'
 
 # Create your views here.
 def home(request):
@@ -145,7 +145,7 @@ def console(request,name):
         vmname = vm['name']
         node = vm['node']
 
-        url = 'https://prxlag01node01.telepartnershipsolutions.et:5101/?console=kvm&novnc=1&vmid=' + str(vmid)+ '&vmname='+ str(vmname)+'&node='+ node + '&resize=off&cmd='
+        url = 'https://prxlag01node01.zergaw.com:5101/?console=kvm&novnc=1&vmid=' + str(vmid)+ '&vmname='+ str(vmname)+'&node='+ node + '&resize=off&cmd='
         ticket = request.session['ticket']
         api_name = request.session['username']
         try:
@@ -409,7 +409,10 @@ def backup(request,name):
             return redirect('logout')
 
         bks = response_json['data']
-        number_ofbks = len(bks)
+        if bks is not None:
+            number_ofbks = len(bks)
+        else:
+            number_ofbks = 0
         request.session['backups'] = bks
         backups = request.session['backups']
         bks = []
