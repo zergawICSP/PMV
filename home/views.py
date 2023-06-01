@@ -144,8 +144,9 @@ def console(request,name):
         vmid = vm['vmid']
         vmname = vm['name']
         node = vm['node']
-
-        url = 'https://prxlag01node01.zergaw.com:5101/?console=kvm&novnc=1&vmid=' + str(vmid)+ '&vmname='+ str(vmname)+'&node='+ node + '&resize=off&cmd='
+        print('vmid')
+        print(vmname)
+        url = "https://prxlag01node01.zergaw.com:5101/?console=kvm&novnc=1&vmid=" + str(vmid)+ "&vmname="+ str(vmname)+"&node="+ node + "&resize=off&cmd="
         ticket = request.session['ticket']
         api_name = request.session['username']
         try:
