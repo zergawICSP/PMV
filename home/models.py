@@ -6,6 +6,7 @@ class Client(models.Model):
     api_name = models.CharField(max_length=300,default='apiclient')
     phonenumber = models.CharField(max_length=300)
     phonenumber2 = models.CharField(max_length=300,blank=True,null=True)
+    vmid = models.CharField(max_length=300,blank=True,null=True)
     address = models.CharField(max_length=300,blank=True,null=True)
     email = models.EmailField(max_length=300,blank=True,null=True) 
     website = models.CharField(max_length=300,blank=True,null=True)
