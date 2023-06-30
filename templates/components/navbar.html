@@ -1,0 +1,44 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="d-flex align-items-center justify-content-center">
+        <img src="{% static 'login/images/favicon.ico' %}" alt="Avatar">
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">{{request.session.username}}</a>
+        </li>
+      </ul>
+      {% if request.session.username %}
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>
+
+  <style>
+    img {
+  border-radius: 25%;
+  width: 35px;
+  height: 35px;
+}
+    .navbar{
+    background-color: #1462f3;
+  }
+  </style>
