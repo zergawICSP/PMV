@@ -9,8 +9,10 @@ from datetime import date
 from .models import Client,Notification,Notes,Ticket
 import json
 
-BASE_URL = 'https://prxlag01node01.zergaw.com:5101'
+#BASE_URL = 'https://prxlag01node01.zergaw.com:5101'
+#storage = 'EXT_HDD_BACKUP_CLIENT'
 
+BASE_URL = 'https://10.123.13.6:8006'
 # Create your views here.
 def home(request):
     if 'username' in request.session:
@@ -166,7 +168,7 @@ def console(request,name):
             }
         response = render(request,'console.html',context)
         ticket = urllib.parse.quote(ticket, safe='')
-        response.set_cookie('PVEAuthCookie',ticket,domain=BASE_URL,samesite=None,secure=True)
+        response.set_cookie('PVEAuthCookie',ticket,domain='zergaw.com',secure=True)
         return response
     else:
         return redirect('login')
@@ -390,7 +392,7 @@ def backup(request,name):
         for vm in vms:
             if vm['name'] == name:
                 vms = vm
-        storage = 'EXT_HDD_BACKUP_CLIENT'
+        storage = 'local'
         
         node = vms['node']
         vmid = vms['vmid']
@@ -451,7 +453,7 @@ def backupnow(request):
         csrf = request.session['csrf']
         vms = request.session['vms']
         node = request.session['node']
-        storage = 'EXT_HDD_BACKUP_CLIENT'
+        storage = 'local'
 
         notes = request.POST.get('notes')
         if notes== '':
