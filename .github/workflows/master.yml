@@ -16,6 +16,7 @@ jobs:
     runs-on: debian
 
     steps:
+    - uses: actions/checkout@v2
     - name: Configure SSH
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
