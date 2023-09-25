@@ -88,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'proxmox_v1',
         'USER': 'postgres',
-        'PASSWORD': 'admin1',
+        'PASSWORD': 'admin',
         'HOST': '',
         'PORT': '5433',
     }
