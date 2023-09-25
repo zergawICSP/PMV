@@ -1,16 +1,18 @@
-# Pull base image
-FROM python:3.10.4-slim-bullseye
+# Dockerfile
 
-# Set environment variables
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Python runtime
+FROM python:3.10
 
-# Set work directory
+# Allows docker to cache installed dependencies between builds
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Mounts the application code to the image
+COPY . code
 WORKDIR /code
 
-# Install dependencies
-COPY . .
-RUN pip install -r requirements.txt
+EXPOSE 8000
 
-CMD python manage.py runserver 0.0.0.0:8000
+# runs the production server
+ENTRYPOINT ["python", "PMV/manage.py"]
+CMD ["runserver", "0.0.0.0:8000"]

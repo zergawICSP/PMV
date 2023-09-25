@@ -17,6 +17,7 @@
     <meta name="description" content="ZCloud" />
     <meta name="keywords" content="ZCloud"/>
     <meta name="author" content="CodedThemes"/>
+    
 
     <!-- Favicon icon -->
     <link rel="icon" href="{% static 'login/images/logo-128.png' %}" type="image/x-icon">
@@ -27,6 +28,8 @@
     <!-- vendor css -->
     <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+    <!-- Chart js -->
 
 </head>
 
@@ -62,7 +65,7 @@
                     <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">{{vm.name}}</span></a>
                         <ul class="pcoded-submenu">
-                            <li class="active"><a href="{% url 'summary' vm.name %}" class="">Summary</a></li>
+                            <li class="active"><a href="{% url 'summary' vm.name 'week' %}" class="">Summary</a></li>
                             <li class=""><a href="{% url 'console' vm.name %}" class="">Console</a></li>
                             <li class=""><a href="{% url 'backup' vm.name %}" class="">Backup</a></li>
                             <li class=""><a href="{% url 'snapshots' vm.name %}" class="">Snapshots</a></li>
@@ -165,7 +168,7 @@
                         <div class="page-wrapper">
                             <!-- [ Main Content ] start -->
                             <label><h5 style="color: blue;">Summary</h5></label>
-                            
+
                             <div class="row">
                                 <div class="col-xl-6 col-md-6 m-b-30">
                                     <div class="card card-event col-xl-12">
@@ -173,32 +176,98 @@
                                             <div class="row align-items-center justify-content-center">
                                                 <div class="col">
                                                     <h5 class="m-0" id="uptime">( Uptime: {{vm.uptime}})</h5><hr>
-                                                    <a href="{% url 'summary' vm.name %}">
+                                                    <a href="{% url 'summary' vm.name 'week' %}">
                                                         <i class="feather icon-refresh-cw text-c-blue f-20 m-r-15"></i>
                                                     </a>
                                                    
                                                 </div>
                                             </div>
                                             <h2 class="mt-3 f-w-300">{{vm.name}}</h2>
-                                            <h5 class="text-muted mt-4 mb-0" style="color: blue;">{{vm.status}}</h5>
-                                            {% if vm.status == 'running' %}
-                                            <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i></h3>
-                                            {% else %}
-                                            <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i></h3>
-                                            {% endif %}  
+                                        </div> 
+
+                                        <div class="card-block">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col">
+                                                    <h5 class="m-0" id="status">{{vm.status}}</h5>
+                                                    {% if vm.status == 'running' %}
+                                                    <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i></h3>
+                                                    {% else %}
+                                                    <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i></h3>
+                                                    {% endif %}
+                                                   
+                                                </div>
+                                            </div>
                                         </div>
-                                            
-                                    </div>    
+                                        <div class="card-block">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col">
+                                                    <!--
+                                                        
+                                                    -->
+                                                    <div class="row">
+                                                        <img src="{% static 'login/images/exchange.png' %}" style="width: 20px; height: 20px;" alt="ips">
+                                                        <h5 class="m-0" id="uptime"> IPs</h5><hr>
+                                                        <button id="view" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">View</button>
+                                                    </div>
+                                                    <!-- Modal -->
+                                                <div class="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered " role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Guest Agent Network Information</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <table class="table"  >
+                                                                <thead>
+                                                                <tr>
+                                                                    <th scope="col">Name</th>
+                                                                    <th scope="col">MAC address</th>
+                                                                    <th scope="col">IP address</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% for ip in IPs%}
+                                                                <tr>
+                                                                    {% for i in ip.name %}
+                                                                    <td>{{i}}</td>
+                                                                    {% endfor %}
+                                                                    {% for j in ip.hardwareaddress %}
+                                                                    <td>{{j}}</td>
+                                                                    {% endfor %}
+                                                                    {% for k in ip.ipaddress %}
+                                                                    <td><small>{{k}}</small></td>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                                {% empty %}
+                                                                <tr>
+                                                                    <td></td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-xl-6 col-md-6 m-b-30">
-                                    <div class="card card-event col-xl-12">
+                                    <div class="card col-xl-12">
                                         <div class="card-block">
                                             <div class="row align-items-center justify-content-center">
                                                 <div class="col">
                                                     <h5 class="m-0" id="uptime">Notes</h5><hr>
                                                     <form action="/editnotes" method="post">
                                                         {% csrf_token %}
-                                                        <textarea name="notes" class="form-control" cols="30" rows="10">{{notes}}</textarea> <br>
+                                                        <textarea name="notes" class="form-control" cols="30" rows="9">{{notes}}</textarea> <br>
                                                         <button class="btn btn-outline-primary ms-1">Save Changes</button>
                                                     </form>
                                                 </div>
@@ -206,49 +275,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-10 col-md-10 m-b-30">
-                                    <div class="card card-event col-xl-12">
-                                        <div class="card-block">
-                                            <div class="row align-items-center justify-content-center">
-                                                <div class="col">
-                                                    <div class="row">
-                                                        <img src="{% static 'login/images/exchange.png' %}" style="width: 20px; height: 20px;" alt="ips">
-                                                        <h5 class="m-0" id="uptime"> IPs</h5><hr>
-                                                    </div>
-                                                    <table class="table">
-                                                        <thead>
-                                                          <tr>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">MAC address</th>
-                                                            <th scope="col">IP address</th>
-                                                          </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {% for ip in IPs%}
-                                                          <tr>
-                                                            {% for i in ip.name %}
-                                                            <td>{{i}}</td>
-                                                            {% endfor %}
-                                                            {% for j in ip.hardwareaddress %}
-                                                            <td>{{j}}</td>
-                                                            {% endfor %}
-                                                            {% for k in ip.ipaddress %}
-                                                            <td>{{k}}</td>
-                                                            {% endfor %}
-                                                          </tr>
-                                                          {% empty %}
-                                                          <tr>
-                                                            <td></td>
-                                                          </tr>
-                                                          {% endfor %}
-                                                        </tbody>
-                                                      </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
+
                             <div class="row">
                                 <!--[ cpu ] start-->
                             <div class="col-md-6 col-xl-4">
@@ -349,8 +377,84 @@
                             </div>
                             <!--[ bootdisk ] end-->
                             </div>
-                            <!-- [ Main Content ] end -->
+                           <!-- [ Main Content ] end -->
                             
+                            <!--rrddata-->
+                            
+                            <div class="row">
+                                <!--CPU usage-->
+                                <div class="col-xl-12 col-md-12 m-b-30">
+                                    <div class="card card-event col-xl-12">
+                                        <div class="card-block">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <h5 class="m-0 col-md-10" id="uptime">CPU Usage</h5><hr>
+                                                        <select name="cpudate" class="timely form-control col-md-2" style="width: 10%;" id="">
+                                                            <option value="">{{request.session.selected_timely}}...</option>
+                                                            {% for time in times %}
+                                                            <option value="{{time}}">{{time}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md">
+                                                <canvas id="cpuChart"></canvas>
+                                            </div>
+                                        </div>                 
+                                    </div>    
+                                </div>
+                                <!--Memory usage-->
+                                <div class="col-xl-12 col-md-12 m-b-30">
+                                    <div class="card card-event col-xl-12">
+                                        <div class="card-block">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <h5 class="m-0 col-md-10" id="memory">Memory Usage</h5><hr>
+                                                        <select name="memdate" class="timely form-control col-md-2" style="width: 10%;" id="">
+                                                            <option value="">{{request.session.selected_timely}}...</option>
+                                                            {% for time in times %}
+                                                            <option value="{{time}}">{{time}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md">
+                                                <canvas id="memoryChart"></canvas>
+                                            </div>
+                                        </div>                 
+                                    </div>    
+                                </div>
+                                <!--Network traffic-->
+                                <div class="col-xl-12 col-md-12 m-b-30">
+                                    <div class="card card-event col-xl-12">
+                                        <div class="card-block">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <h5 class="m-0 col-md-10" id="network">Network Traffic</h5><hr>
+                                                        <select name="network" class="timely form-control col-md-2" style="width: 10%;" id="">
+                                                            <option value="">{{request.session.selected_timely}}...</option>
+                                                            {% for time in times %}
+                                                            <option value="{{time}}">{{time}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md">
+                                                <canvas id="networkChart"></canvas>
+                                            </div>
+                                        </div>                 
+                                    </div>    
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -375,6 +479,33 @@
     </style>
 
     <!-- Required Js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+          $('.timely').on('change', function() {
+            var vmname = "{{vm.name|safe}}"
+            var duration = $(this).val();
+            console.log(duration)
+
+            var url_mask = "{% url 'summary' name='name' timely='timely' %}".replace(/name/, vmname.toString()).replace(/timely/, duration.toString());;
+            
+            //var times = JSON.parse("{{times|safe}}")
+            console.log(vmname)
+            //for(i=0;i<times.length;i++){
+                //alert(times[i])
+            //}
+            $.ajax({
+              url: url_mask,
+              type: 'GET',
+              success: function() {
+                console.log('week')
+                window.location.href = url_mask;
+              }
+            });
+          });
+        });
+        </script>
     <script>
         var node = "{{request.session.node}}"
         var vmid = "{{request.session.vmid}}"
@@ -396,7 +527,7 @@
             console.log('data')
             console.log(response.status)
             var data = await response.json();
-            // song info
+            // info
             var track = data["recenttracks"]["track"][0]["name"]
             var artist = data["recenttracks"]["track"][0]["artist"]["#text"]
             document.getElementById('music').innerHTML = "&#x1F3A7; listening to " + track +  " by " + artist;
@@ -434,7 +565,167 @@
             console.log(response)
         }
     </script>
-<script src="{% static 'dashboard/js/vendor-all.min.js' %}"></script>
+    <!--Date Adapter-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+   
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!--CPU usage-->
+    <script>
+        var cpulables = JSON.parse("{{cpulables|safe}}")
+        var cpudate = JSON.parse('{{cpudate|safe}}')
+        var cpudate_lable = JSON.parse('{{cpudate_lable|safe}}')
+        var client = "{{client}}"
+        console.log("data")
+        console.log(cpulables)
+        console.log(cpudate)
+        console.log(client)
+        updated_data = []
+        var ctx = document.getElementById('cpuChart').getContext('2d');
+        for (let i = 0; i < cpudate.length; i++) {
+            obj = {x:cpudate[i],y:cpulables[i]}
+            updated_data.push(obj)
+        }
+        console.log("updated")
+        console.log(updated_data)
+        var cpuChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: cpudate,
+                datasets: [
+                    { 
+                    data: cpulables,
+                    label: "CPU Usage",
+                    borderColor: "rgb(60,186,159)",
+                    backgroundColor: "rgb(60,186,159,0.1)",
+                    fill:true
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function(value, index, ticks) {
+                                return value + ' %';
+                            }
+                        },
+                        beginAtZero: true
+                    },
+                    x:{
+                        type: 'time',
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10
+                        },
+                    }
+                }
+            }
+            });
+     </script>
+    <!--Memory Usage--> 
+    <script>
+        var memorylables = JSON.parse("{{memorylables|safe}}")
+        var cpudate = JSON.parse('{{cpudate|safe}}')
+        console.log("data")
+        console.log(memorylables)
+        console.log(cpudate)
+        updated_data = []
+        var ctx = document.getElementById('memoryChart').getContext('2d');
+        for (let i = 0; i < cpudate.length; i++) {
+            obj = {x:cpudate[i],y:memorylables[i]}
+            updated_data.push(obj)
+        }
+        console.log("updated")
+        console.log(updated_data)
+        var cpuChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: cpudate,
+                datasets: [
+                    { 
+                    data: memorylables,
+                    label: "RAM Usage",
+                    borderColor: "rgb(60,186,159)",
+                    backgroundColor: "rgb(60,186,159,0.1)",
+                    fill:true
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function(value, index, ticks) {
+                                return value + ' %';
+                            }
+                        },
+                        beginAtZero: true
+                    },
+                    x:{
+                        type: 'time',
+                        ticks: {
+                            autoSkip:true,
+                            maxTicksLimit: 10
+                            }
+                    }
+                }
+            }
+            });
+    </script>
+    <!--Network Traffic--> 
+    <script>
+        var netin = JSON.parse("{{netin|safe}}")
+        var netout = JSON.parse("{{netout|safe}}")
+        var cpudate = JSON.parse('{{cpudate|safe}}')
+        var cpudate_lable = JSON.parse('{{cpudate_lable|safe}}')
+
+        var ctx = document.getElementById('networkChart').getContext('2d');
+        var networkChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: cpudate,
+                datasets: [
+                    { 
+                    data: netin,
+                    label: "netin",
+                    borderColor: "rgb(60,186,159)",
+                    backgroundColor: "rgb(60,186,159,0.1)",
+                    fill:true
+                   },
+                   { 
+                    data: netout,
+                    label: "netout",
+                    borderColor: "rgb(100,149,237)",
+                    backgroundColor: "rgb(100,149,237,0.1)",
+                    fill:true
+                   }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function(value, index, ticks) {
+                                return value + ' %';
+                            }
+                        },
+                        beginAtZero: true
+                    },
+                    x:{
+                        type:'time',
+                        ticks: {
+                            auto:true,
+                            maxTicksLimit: 10
+                            }
+                    }
+                }
+            }
+            });
+     </script>
+    <script src="{% static 'dashboard/js/vendor-all.min.js' %}"></script>
 	<script src="{% static 'dashboard/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'dashboard/js/pcoded.min.js' %}"></script>
 

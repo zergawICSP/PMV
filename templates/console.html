@@ -59,7 +59,7 @@
                     <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds" class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">{{vm.name}}</span></a>
                         <ul class="pcoded-submenu">
-                            <li class=""><a href="{% url 'summary' vm.name %}" class="">Summary</a></li>
+                            <li class=""><a href="{% url 'summary' vm.name 'week' %}" class="">Summary</a></li>
                             <li class="active"><a href="{% url 'console' vm.name %}" class="">Console</a></li>
                             <li class=""><a href="{% url 'backup' vm.name %}" class="">Backup</a></li>
                             <li class=""><a href="{% url 'snapshots' vm.name %}" class="">Snapshots</a></li>

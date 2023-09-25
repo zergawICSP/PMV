@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 concurrency:
-   group: master
+   group: main
    cancel-in-progress: true
 
 jobs:

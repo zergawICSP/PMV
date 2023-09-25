@@ -6,13 +6,15 @@ from django.contrib import messages
 from rest_framework import viewsets
 import urllib.parse
 from datetime import date
+from datetime import timedelta
 from .models import Client,Notification,Notes,Ticket
 import json
 
-#BASE_URL = 'https://prxlag01node01.zergaw.com:5101'
+
+BASE_URL = 'https://prxlag01node01.zergaw.com:5101'
 #storage = 'EXT_HDD_BACKUP_CLIENT'
 
-BASE_URL = 'https://10.123.13.6:8006'
+#BASE_URL = 'https://10.123.13.6:8006'
 # Create your views here.
 def home(request):
     if 'username' in request.session:
@@ -173,7 +175,7 @@ def console(request,name):
     else:
         return redirect('login')
 
-def summary(request,name):
+def summary(request,name,timely):
     if 'username' in request.session:
         ticket = request.session['ticket']
         vms = request.session['vms']
@@ -183,9 +185,16 @@ def summary(request,name):
             if vm['name'] == name:
                 vms = vm
         
+        times = [
+            "hour",
+            "day",
+            "week",
+            "month",
+        ]
         request.session['vmid'] = vms['vmid']
         request.session['vmname'] = vms['name']
         request.session['node'] = vms['node']
+        request.session['selected_timely'] = timely
         node = request.session['node']
         vmid = request.session['vmid']
         url = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/status/current"
@@ -198,17 +207,41 @@ def summary(request,name):
         url3 = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/config"
         response3 = requests.get(url3,headers=headers, verify=False)
 
+        url4 = f"{BASE_URL}/api2/json/nodes/{node}/qemu/{vmid}/rrddata"
+        params = {'timeframe':timely}
+        response4 = requests.get(url4,headers=headers, verify=False,params=params)
+
         api_name = request.session['username']
         try:
             response_json = response.json()
             response_json2 = response2.json()
             response_json3 = response3.json()
+            response_json4 = response4.json()
         except:
             return redirect('logout')
         vm = response_json['data']
         IPs = response_json2['data']
         notes = response_json3['data']
+        rrdata = response_json4['data']
         api_name = request.session['username']
+
+        cpulables = []
+        cpudate = []
+        cpudate_lable = []
+        memorylables = []
+        netin = []
+        netout = []
+
+        for data in rrdata:
+            cpulables.append(data['cpu']*100)
+            #cpudate.append(data['time'] % (24 * 3600)// 3600)
+            #cc = datetime.datetime.fromtimestamp(data['time']).strftime('%Y-%m-%d %H:%M:%S')
+            cpudate.append(data['time'])
+            #cc_year = str(cc.year) + '-' +str(cc.month) + '-' + str(cc.day)
+            #cpudate_lable.append(int(cc_year))
+            memorylables.append(data['mem']/1000000000)
+            netin.append(data['netin']/1000)
+            netout.append(data['netout']/1000)
         
         try:
             client = Client.objects.get(api_name=api_name)
@@ -234,6 +267,9 @@ def summary(request,name):
         vm['uptime'] = str(datetime.timedelta(seconds=vm['uptime']))
         memper = (vm['mem']*100)/vm['maxmem']
         memper = round(memper,2)
+
+        print('cpudate')
+        print(cpudate)
         try:
             client = Client.objects.get(api_name=api_name)
             notifications = Notification.objects.filter(receivers = client)
@@ -247,7 +283,14 @@ def summary(request,name):
                 'IPs':InPs,
                 'notes':notes,
                 'client':client,
-                'notifications':notifications
+                'notifications':notifications,
+                'cpulables':cpulables,
+                'cpudate': cpudate,
+                'cpudate_lable': cpudate_lable,
+                'memorylables':memorylables,
+                'netin':netin,
+                'netout':netout,
+                'times':times,
             }
         response = render(request,'summary.html',context)
         return response
@@ -263,21 +306,23 @@ def editnotes(request):
         clientn = Client.objects.get(api_name=api_name)
         vmid = str(vmid)
         vmname = request.session['vmname']
+        timely = request.session['selected_timely']
         try:
             findnote = Notes.objects.get(vmid=vmid,note_by=clientn)
             findnote.notes = notes
             findnote.save()
-            return redirect('summary',name=vmname)
+            return redirect('summary',name=vmname, timely=timely)
         except:
             Note = Notes.objects.create(vmid=vmid,notes=notes)
             customer = Client.objects.get(api_name=api_name)
             Note.note_by.add(customer)
             Note.save()
             vmname = request.session['vmname']
-            return redirect('summary',name=vmname)
+            return redirect('summary',name=vmname, timely=timely)
     else:
         vmname = request.session['vmname']
-        return redirect('summary',name=vmname)
+        timely = request.session['selected_timely']
+        return redirect('summary',name=vmname,timely=timely)
 
 
 def snapshots(request,name):
